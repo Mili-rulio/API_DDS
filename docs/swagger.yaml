@@ -1,0 +1,140 @@
+basePath: /api
+definitions:
+  models.PuntoDeDonacion:
+    properties:
+      ciudad:
+        type: string
+      coordenadas:
+        description: Coordenadas en formato WKT
+        type: string
+      direccion:
+        type: string
+      id:
+        type: integer
+      nombre:
+        type: string
+    type: object
+  routes.PuntoDeDonacionResult:
+    properties:
+      ciudad:
+        type: string
+      coordenadas:
+        type: string
+      direccion:
+        type: string
+      distancia:
+        type: number
+      nombre:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Esta es una API para gestionar puntos de donación y obtener recomendaciones
+    en base a los mismos.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Puntos de Donación API
+  version: "2.0"
+paths:
+  /puntos:
+    get:
+      description: Obtiene puntos de donación recomendados dentro de un radio.
+      parameters:
+      - description: Coordenadas en formato JSON
+        in: query
+        name: coordenadas
+        required: true
+        type: string
+      - description: Radio en metros
+        in: query
+        name: radio
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/routes.PuntoDeDonacionResult'
+            type: array
+        "400":
+          description: Parámetros inválidos
+          schema:
+            type: string
+        "404":
+          description: No se encontraron puntos de donación en el radio especificado
+          schema:
+            type: string
+      summary: Obtiene puntos de donación dentro de un radio
+      tags:
+      - puntos
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo punto de donación
+      parameters:
+      - description: Punto de Donación
+        in: body
+        name: punto
+        required: true
+        schema:
+          $ref: '#/definitions/models.PuntoDeDonacion'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.PuntoDeDonacion'
+        "400":
+          description: Error al crear el punto de donación
+          schema:
+            type: string
+      summary: Crea un nuevo punto de donación
+      tags:
+      - puntos
+  /puntos/{id}:
+    delete:
+      description: Elimina un punto de donación de la base de datos.
+      parameters:
+      - description: ID del Punto de Donación
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Punto de donación eliminado
+          schema:
+            type: string
+        "404":
+          description: Punto de donación no encontrado
+          schema:
+            type: string
+      summary: Elimina un punto de donación
+      tags:
+      - puntos
+  /puntosDB:
+    get:
+      description: Obtiene todos los puntos de donación recomendados por la ONG.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PuntoDeDonacion'
+            type: array
+      summary: Obtiene todos los puntos de donación recomendados.
+      tags:
+      - puntos
+swagger: "2.0"
